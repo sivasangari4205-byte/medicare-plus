@@ -1,0 +1,19 @@
+# Dependencies (VERY IMPORTANT)
+node_modules/
+
+# Build output
+dist/
+build/
+
+# Environment variables (SECURITY)
+.env
+
+# Logs
+*.log
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Cache
+.cache/

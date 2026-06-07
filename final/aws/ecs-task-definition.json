@@ -1,0 +1,40 @@
+{
+  "family": "medicare-backend",
+  "networkMode": "awsvpc",
+  "requiresCompatibilities": ["FARGATE"],
+  "cpu": "512",
+  "memory": "1024",
+  "executionRoleArn": "arn:aws:iam::ACCOUNT_ID:role/ecsTaskExecutionRole",
+  "taskRoleArn": "arn:aws:iam::ACCOUNT_ID:role/ecsTaskRole",
+  "containerDefinitions": [
+    {
+      "name": "medicare-backend",
+      "image": "ACCOUNT_ID.dkr.ecr.REGION.amazonaws.com/medicare-backend:latest",
+      "portMappings": [{ "containerPort": 5000, "protocol": "tcp" }],
+      "environment": [
+        { "name": "NODE_ENV", "value": "production" },
+        { "name": "PORT", "value": "5000" }
+      ],
+      "secrets": [
+        { "name": "JWT_SECRET", "valueFrom": "arn:aws:secretsmanager:REGION:ACCOUNT_ID:secret:medicare/jwt-secret" },
+        { "name": "JWT_REFRESH_SECRET", "valueFrom": "arn:aws:secretsmanager:REGION:ACCOUNT_ID:secret:medicare/jwt-refresh-secret" },
+        { "name": "MONGODB_URI", "valueFrom": "arn:aws:secretsmanager:REGION:ACCOUNT_ID:secret:medicare/mongodb-uri" },
+        { "name": "RAZORPAY_KEY_ID", "valueFrom": "arn:aws:secretsmanager:REGION:ACCOUNT_ID:secret:medicare/razorpay-key-id" },
+        { "name": "RAZORPAY_KEY_SECRET", "valueFrom": "arn:aws:secretsmanager:REGION:ACCOUNT_ID:secret:medicare/razorpay-key-secret" },
+        { "name": "ENCRYPTION_KEY", "valueFrom": "arn:aws:secretsmanager:REGION:ACCOUNT_ID:secret:medicare/encryption-key" }
+      ],
+      "logConfiguration": {
+        "logDriver": "awslogs",
+        "options": {
+          "awslogs-group": "/ecs/medicare-backend",
+          "awslogs-region": "ap-south-1",
+          "awslogs-stream-prefix": "ecs"
+        }
+      },
+      "healthCheck": {
+        "command": ["CMD-SHELL", "curl -f http://localhost:5000/api/health || exit 1"],
+        "interval": 30, "timeout": 5, "retries": 3, "startPeriod": 60
+      }
+    }
+  ]
+}

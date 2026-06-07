@@ -17,3 +17,5 @@ Thumbs.db
 
 # Cache
 .cache/
+node_modules/
+hos1/frontend/node_modules/
